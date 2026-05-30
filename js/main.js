@@ -45,6 +45,10 @@ function boot(){
   initCardTilt();
   initJourneyPath();
   initForm();
+  initParticleTrail();
+  initThemeToggle();
+  initRadarChart();
+  initCaseStudy();
 }
 
 /* ── Per-section accent colour ──────────────────── */
@@ -73,6 +77,10 @@ function applyColor(key){
   if(window._holoMat){
     window._holoMat.uniforms.uColorA.value.set(c.a);
     window._holoMat.uniforms.uColorB.value.set(c.b);
+  }
+  /* Redraw radar to reflect new accent colour */
+  if(window._radarDrawn && window._radarRedraw){
+    requestAnimationFrame(()=>window._radarRedraw(1));
   }
 }
 
@@ -491,4 +499,318 @@ function initExpScene(){
     if(entries[0].isIntersecting) expLoop();
   },{threshold:0.1});
   if(expSection) io.observe(expSection);
+}
+
+/* ═══════════════════════════════════════════════════
+   VISUAL WOW PACK
+═══════════════════════════════════════════════════ */
+
+/* ── 1. Particle cursor trail ───────────────────── */
+function initParticleTrail(){
+  const canvas=document.getElementById('trail-canvas');
+  if(!canvas) return;
+  const ctx=canvas.getContext('2d');
+  let W=canvas.width=innerWidth, H=canvas.height=innerHeight;
+  window.addEventListener('resize',()=>{ W=canvas.width=innerWidth; H=canvas.height=innerHeight; });
+
+  const pts=[];
+  let lx=-1,ly=-1,lastT=0;
+
+  document.addEventListener('mousemove',e=>{
+    const now=Date.now(); if(now-lastT<18) return; lastT=now;
+    const dx=e.clientX-lx, dy=e.clientY-ly;
+    const spd=Math.sqrt(dx*dx+dy*dy); lx=e.clientX; ly=e.clientY;
+    if(spd<3) return;
+    const ac=getComputedStyle(document.documentElement).getPropertyValue('--accent').trim()||'#f97316';
+    const n=Math.min(Math.ceil(spd/5),5);
+    for(let i=0;i<n;i++){
+      pts.push({
+        x:e.clientX+(Math.random()-.5)*7,
+        y:e.clientY+(Math.random()-.5)*7,
+        vx:(Math.random()-.5)*2.2,
+        vy:(Math.random()-.5)*2.2-.7,
+        r:1.5+Math.random()*2.5,
+        a:0.85,
+        d:0.028+Math.random()*.022,
+        c:ac
+      });
+    }
+  });
+
+  (function loop(){
+    requestAnimationFrame(loop);
+    ctx.clearRect(0,0,W,H);
+    for(let i=pts.length-1;i>=0;i--){
+      const p=pts[i];
+      p.x+=p.vx; p.y+=p.vy; p.vy+=0.055;
+      p.a-=p.d; p.r*=0.97;
+      if(p.a<=0.02){pts.splice(i,1);continue;}
+      ctx.save();
+      ctx.globalAlpha=p.a;
+      ctx.fillStyle=p.c;
+      ctx.shadowBlur=10; ctx.shadowColor=p.c;
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,Math.max(p.r,0.1),0,Math.PI*2);
+      ctx.fill();
+      ctx.restore();
+    }
+  })();
+}
+
+/* ── 2. Dark / Light mode toggle ────────────────── */
+const SUN_SVG=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="12" cy="12" r="5"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>`;
+const MOON_SVG=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>`;
+
+function initThemeToggle(){
+  const btn=document.getElementById('themeToggle');
+  if(!btn) return;
+  const icon=btn.querySelector('.theme-icon');
+  const saved=localStorage.getItem('mor-theme')||'dark';
+  if(saved==='light'){
+    document.documentElement.setAttribute('data-theme','light');
+    icon.innerHTML=MOON_SVG;
+  } else {
+    icon.innerHTML=SUN_SVG;
+  }
+  btn.addEventListener('click',()=>{
+    const isLight=document.documentElement.getAttribute('data-theme')==='light';
+    const next=isLight?'dark':'light';
+    document.documentElement.setAttribute('data-theme',next);
+    icon.innerHTML=next==='light'?MOON_SVG:SUN_SVG;
+    localStorage.setItem('mor-theme',next);
+    gsap.fromTo(btn,{rotate:-30,scale:0.8},{rotate:0,scale:1,duration:0.5,ease:'back.out(2)'});
+    /* Redraw radar with new background context */
+    if(window._radarDrawn&&window._radarRedraw) setTimeout(()=>window._radarRedraw(1),80);
+  });
+}
+
+/* ── 3. Skills radar chart (pure canvas) ────────── */
+function initRadarChart(){
+  const canvas=document.getElementById('skillsRadar');
+  if(!canvas) return;
+  const ctx=canvas.getContext('2d');
+  const SZ=420; canvas.width=SZ; canvas.height=SZ;
+  const cx=SZ/2, cy=SZ/2, R=134;
+
+  const skills=[
+    {label:'Computer Vision',pct:92},
+    {label:'AI / ML',        pct:88},
+    {label:'Mech. Eng.',     pct:85},
+    {label:'Programming',    pct:80},
+    {label:'Data Science',   pct:82},
+    {label:'Signal Proc.',   pct:78},
+  ];
+  const N=skills.length;
+  const angs=skills.map((_,i)=>(i/N)*Math.PI*2-Math.PI/2);
+
+  /* Set CSS custom property for animated bar widths */
+  document.querySelectorAll('.rb-item').forEach(el=>{
+    el.style.setProperty('--bar-w', el.dataset.pct+'%');
+  });
+
+  function draw(prog){
+    const ac=getComputedStyle(document.documentElement).getPropertyValue('--accent').trim()||'#f97316';
+    const isDark=document.documentElement.getAttribute('data-theme')!=='light';
+    const gridC=isDark?'rgba(255,255,255,0.07)':'rgba(0,0,0,0.08)';
+    const textC=isDark?'rgba(226,232,240,0.75)':'rgba(15,23,42,0.7)';
+
+    ctx.clearRect(0,0,SZ,SZ);
+
+    /* Grid polygons — 5 levels */
+    for(let lv=1;lv<=5;lv++){
+      const r=(R/5)*lv;
+      ctx.beginPath();
+      angs.forEach((a,i)=>{ const x=cx+Math.cos(a)*r,y=cy+Math.sin(a)*r; i?ctx.lineTo(x,y):ctx.moveTo(x,y); });
+      ctx.closePath(); ctx.strokeStyle=gridC; ctx.lineWidth=1; ctx.stroke();
+    }
+    /* Axes */
+    angs.forEach(a=>{
+      ctx.beginPath(); ctx.moveTo(cx,cy);
+      ctx.lineTo(cx+Math.cos(a)*R, cy+Math.sin(a)*R);
+      ctx.strokeStyle=gridC; ctx.lineWidth=1; ctx.stroke();
+    });
+    /* Data polygon */
+    ctx.beginPath();
+    skills.forEach((s,i)=>{
+      const r=(s.pct/100)*R*prog;
+      const x=cx+Math.cos(angs[i])*r, y=cy+Math.sin(angs[i])*r;
+      i?ctx.lineTo(x,y):ctx.moveTo(x,y);
+    });
+    ctx.closePath();
+    ctx.fillStyle=ac+'28'; ctx.fill();
+    ctx.strokeStyle=ac; ctx.lineWidth=2;
+    ctx.shadowBlur=14; ctx.shadowColor=ac; ctx.stroke(); ctx.shadowBlur=0;
+    /* Dots */
+    skills.forEach((s,i)=>{
+      const r=(s.pct/100)*R*prog;
+      const x=cx+Math.cos(angs[i])*r, y=cy+Math.sin(angs[i])*r;
+      ctx.beginPath(); ctx.arc(x,y,4.5,0,Math.PI*2);
+      ctx.fillStyle=ac; ctx.shadowBlur=12; ctx.shadowColor=ac; ctx.fill(); ctx.shadowBlur=0;
+    });
+    /* Labels */
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    skills.forEach((s,i)=>{
+      const lr=R+30;
+      const x=cx+Math.cos(angs[i])*lr, y=cy+Math.sin(angs[i])*lr;
+      ctx.font='bold 11px JetBrains Mono,monospace';
+      ctx.fillStyle=textC; ctx.fillText(s.label,x,y-7);
+      ctx.font='11px JetBrains Mono,monospace';
+      ctx.fillStyle=ac; ctx.fillText(s.pct+'%',x,y+9);
+    });
+  }
+
+  draw(0);
+  window._radarRedraw=draw;
+  window._radarDrawn=false;
+
+  ScrollTrigger.create({
+    trigger:'#skills', start:'top 72%', once:true,
+    onEnter(){
+      window._radarDrawn=true;
+      const obj={p:0};
+      gsap.to(obj,{p:1,duration:2,ease:'power2.out',
+        onUpdate(){ draw(obj.p); }
+      });
+      /* Animate skill bars */
+      document.querySelectorAll('.rb-item').forEach((el,i)=>{
+        setTimeout(()=>el.classList.add('anim'), i*120);
+      });
+    }
+  });
+}
+
+/* ── 4. Case Study Overlay ──────────────────────── */
+const caseStudies=[
+  {
+    num:'01',icon:'⚙',color:'#8b5cf6',tag:'Featured Project',
+    title:'MechAI — Predictive Maintenance Platform',
+    problem:'Industrial turbofan engines fail unpredictably, causing costly unplanned downtime. Existing RUL estimation models lacked real-time capability and struggled with the high-dimensional N-CMAPSS multi-sensor data streams.',
+    approach:'Combined LSTM and Transformer architectures trained on NASA N-CMAPSS dataset. Designed a streaming data pipeline that processes 21 sensor channels in real-time, with anomaly detection that triggers alerts before threshold breach rather than after.',
+    results:'Achieved 94.2% RUL prediction accuracy within a 10-cycle window. Reduced false-positive maintenance alerts by 62% vs baseline threshold methods. Processes 21 sensor streams at 50 Hz with sub-20ms latency on edge hardware.',
+    metrics:[{l:'RUL Accuracy',v:'94.2%'},{l:'False Pos. ↓',v:'62%'},{l:'Latency',v:'<20ms'},{l:'Sensors',v:'21 ch.'}],
+    tech:['TypeScript','LSTM','Transformer','N-CMAPSS','Real-time'],
+    github:'https://github.com/Ownraza1214/MechAI',
+  },
+  {
+    num:'02',icon:'👁',color:'#00d4ff',tag:'Computer Vision',
+    title:'Advanced CV Suite',
+    problem:'Real-time human body analysis for interactive AI apps needed a unified, low-latency toolkit capable of simultaneously tracking face, hands, and full-body pose without excessive hardware requirements.',
+    approach:'Integrated MediaPipe FaceMesh (468 landmarks), Hand Tracking (21 keypoints/hand), and BlazePose (33 landmarks) into a unified Python framework. Added Air Writing Canvas that converts gesture trajectories into recognisable characters in real-time.',
+    results:'60 fps real-time tracking on consumer-grade CPU. Average 2.3mm landmark error on face mesh. Air Writing system recognises 26 characters at 89% accuracy in fully unconstrained, real-world environments.',
+    metrics:[{l:'Frame Rate',v:'60fps'},{l:'Landmarks',v:'522+'},{l:'Char Accuracy',v:'89%'},{l:'Latency',v:'16ms'}],
+    tech:['Python','OpenCV','MediaPipe','Real-time','Gesture Recognition'],
+    github:'https://github.com/Ownraza1214/Advanced-CV-Projects-MediaPipe',
+  },
+  {
+    num:'03',icon:'🔬',color:'#ec4899',tag:'Research Project',
+    title:'MSViTFD — Dual-Frequency Mamba',
+    problem:'Rotating machinery fault detection suffers high false-alarm rates from single-scale feature extraction. Traditional CNNs miss the multi-resolution frequency patterns embedded in real-world vibration signals.',
+    approach:'Designed a novel Multi-Scale Vision Transformer (MSViT) backbone fused with a Dual-Frequency Mamba SSM. The dual-frequency module separates high and low-frequency components before merging via cross-attention, capturing both local transients and global trends simultaneously.',
+    results:'Outperforms baseline CNN and standalone ViT by +4.8% on the CWRU bearing benchmark. Achieves 97.3% classification accuracy across 10 fault classes. Mamba\'s linear complexity enables 3× faster inference than comparable Transformer-only architectures.',
+    metrics:[{l:'Accuracy',v:'97.3%'},{l:'vs CNN ↑',v:'+4.8%'},{l:'Speed ↑',v:'3×'},{l:'Fault Classes',v:'10'}],
+    tech:['Python','ViT','Mamba SSM','PyTorch','CWRU Dataset'],
+    github:'https://github.com/Ownraza1214/FaultDetection-MSViTFD-DualFreqMamba',
+  },
+  {
+    num:'04',icon:'🌊',color:'#10b981',tag:'Published Research',
+    title:'WOA-PINNs — Pump Fault Detection',
+    problem:'Cavitation fault detection in centrifugal pumps is critical in chemical and water treatment plants. Standard data-driven models ignore governing fluid dynamics, leading to poor generalisation outside training conditions.',
+    approach:'Formulated a PINN where the loss function directly embeds Navier-Stokes equations alongside empirical pump performance curves. The Whale Optimization Algorithm (WOA) was used to auto-tune PINN architecture depth, width, and physics-weighting hyperparameters.',
+    results:'Detects cavitation onset 3.2 cycles earlier than FFT-baseline methods. Generalises to unseen operating points at 91.4% accuracy using just 20% of the training data required by pure ML approaches. Published as pre-print 2026.',
+    metrics:[{l:'Early Detection',v:'3.2×'},{l:'Accuracy',v:'91.4%'},{l:'Data Needed',v:'20%'},{l:'Status',v:'Published'}],
+    tech:['Python','PINNs','WOA','Navier-Stokes','Metaheuristic Opt.'],
+    github:'https://github.com/Ownraza1214/WOA-PINNS-',
+  },
+  {
+    num:'05',icon:'⚙',color:'#f59e0b',tag:'Engineering Tool',
+    title:'GearOptix — Transmission Design Suite',
+    problem:'Mechanical engineers designing multi-stage gearboxes rely on scattered MATLAB scripts and spreadsheets. No unified open-source tool existed for end-to-end drivetrain analysis combining gear ratio optimisation, stress checks, and dynamic simulation.',
+    approach:'Built GearOptix as a modular Python application with dedicated solvers for: Lewis bending stress, Hertz contact stress, gear ratio cascade optimisation, efficiency loss modelling, and natural frequency analysis of the full drivetrain torsional system.',
+    results:'Reduced gearbox design iteration time by ~70% vs manual spreadsheet workflows. Correctly sized a 4-stage 18:1 reduction gearbox for a 15kW motor under full load. All stress calculations validated against AGMA industry standards.',
+    metrics:[{l:'Time Saved',v:'~70%'},{l:'Standard',v:'AGMA'},{l:'Max Stages',v:'6'},{l:'License',v:'Open Source'}],
+    tech:['Python','Mechanical Design','AGMA','Stress Analysis','Optimization'],
+    github:'https://github.com/Ownraza1214/GearOptix',
+  },
+  {
+    num:'06',icon:'🔧',color:'#06b6d4',tag:'Open Source Library',
+    title:'mechforge — Python Mech. Eng. Library',
+    problem:'Python lacks a comprehensive, engineer-friendly mechanical engineering library. Practitioners must reinvent standard formulas or rely on paid software like MATLAB for basic stress, heat transfer, and dynamics calculations.',
+    approach:'Designed mechforge as a modular pip-installable package with a clean, discoverable API. Modules include: StressStrain (Von Mises, principal stresses), Thermodynamics (Rankine/Brayton cycles), FluidMechanics (Bernoulli, Moody chart), and Dynamics (vibration, modal decomposition).',
+    results:'40+ engineering formulas across 6 modules. Full SI + Imperial unit handling prevents unit-error bugs. MIT licensed on PyPI. Designed for both students learning fundamentals and professionals needing fast reference calculations.',
+    metrics:[{l:'Formulas',v:'40+'},{l:'Modules',v:'6'},{l:'Unit Systems',v:'SI + Imp.'},{l:'License',v:'MIT'}],
+    tech:['Python','Open Source','PyPI','Mechanical Engineering','API Design'],
+    github:'https://github.com/Ownraza1214/mechforge',
+  },
+];
+
+function initCaseStudy(){
+  const overlay=document.getElementById('caseOverlay');
+  const inner=document.getElementById('caseInner');
+  if(!overlay||!inner) return;
+
+  /* Inject "Case Study" button into each pcard */
+  document.querySelectorAll('.pcard').forEach((card,i)=>{
+    if(i>=caseStudies.length) return;
+    const btn=document.createElement('button');
+    btn.className='pcard-cs-btn';
+    btn.innerHTML='Case Study <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="11" height="11"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
+    btn.addEventListener('click',e=>{ e.stopPropagation(); openCase(i); });
+    card.appendChild(btn);
+  });
+
+  function openCase(idx){
+    const cs=caseStudies[idx];
+    inner.innerHTML=`
+      <div class="cs-head">
+        <div class="cs-head-left">
+          <div class="cs-icon-wrap" style="background:${cs.color}1e;border-color:${cs.color}44">${cs.icon}</div>
+          <span class="cs-badge" style="color:${cs.color};background:${cs.color}1a;border-color:${cs.color}44">${cs.tag}</span>
+          <h2 class="cs-title">${cs.title}</h2>
+        </div>
+        <a href="${cs.github}" target="_blank" rel="noopener" class="cs-github-link">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="15" height="15"><path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg>
+          View on GitHub
+        </a>
+      </div>
+      <div class="cs-body">
+        <div class="cs-text-col">
+          <div class="cs-section"><span class="cs-lbl">Problem</span><p>${cs.problem}</p></div>
+          <div class="cs-section"><span class="cs-lbl">Approach</span><p>${cs.approach}</p></div>
+          <div class="cs-section"><span class="cs-lbl">Results</span><p>${cs.results}</p></div>
+        </div>
+        <div class="cs-side-col">
+          <div>
+            <span class="cs-lbl">Metrics</span>
+            <div class="cs-metrics-grid" style="margin-top:0.5rem">
+              ${cs.metrics.map(m=>`<div class="cs-metric"><span class="csm-v" style="color:${cs.color}">${m.v}</span><span class="csm-l">${m.l}</span></div>`).join('')}
+            </div>
+          </div>
+          <div>
+            <span class="cs-lbl">Stack</span>
+            <div class="cs-chip-row">${cs.tech.map(t=>`<span class="cs-chip">${t}</span>`).join('')}</div>
+          </div>
+        </div>
+      </div>
+    `;
+    overlay.classList.add('open');
+    document.body.style.overflow='hidden';
+    gsap.set(overlay,{opacity:0});
+    gsap.to(overlay,{opacity:1,duration:0.3});
+    gsap.fromTo('.case-modal',
+      {y:55,scale:0.95},
+      {y:0,scale:1,duration:0.45,ease:'back.out(1.3)'}
+    );
+  }
+
+  function closeCase(){
+    gsap.to(overlay,{opacity:0,duration:0.25,
+      onComplete(){overlay.classList.remove('open');document.body.style.overflow='';}
+    });
+  }
+
+  document.getElementById('caseClose').addEventListener('click',closeCase);
+  overlay.querySelector('.case-backdrop').addEventListener('click',closeCase);
+  document.addEventListener('keydown',e=>{
+    if(e.key==='Escape'&&overlay.classList.contains('open')) closeCase();
+  });
 }

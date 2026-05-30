@@ -14,6 +14,7 @@
 
   <div id="cursor"></div>
   <div id="cursor-ring"></div>
+  <canvas id="trail-canvas"></canvas>
 
   <!-- Loader -->
   <div id="loader">
@@ -39,6 +40,9 @@
       <li><a href="#failures"     data-text="Resilience">Resilience</a></li>
       <li><a href="#contact"      data-text="Contact" class="nav-cta">Contact</a></li>
     </ul>
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+      <span class="theme-icon"></span>
+    </button>
     <button class="nav-toggle" id="navToggle" aria-label="Menu">
       <span></span><span></span><span></span>
     </button>
@@ -637,6 +641,25 @@
         <span class="s-tag">// skills</span>
         <h2>Tech Arsenal<span class="accent">.</span></h2>
       </div>
+
+      <!-- Radar chart + proficiency bars -->
+      <div class="radar-row g-reveal">
+        <div class="radar-canvas-wrap">
+          <canvas id="skillsRadar"></canvas>
+        </div>
+        <div class="radar-bars-col">
+          <h4 class="rb-heading">Proficiency Matrix</h4>
+          <div class="rb-list">
+            <div class="rb-item" data-pct="92"><span class="rb-label">Computer Vision</span><div class="rb-bar-wrap"><div class="rb-fill"></div></div><span class="rb-pct-txt">92%</span></div>
+            <div class="rb-item" data-pct="88"><span class="rb-label">AI / ML</span><div class="rb-bar-wrap"><div class="rb-fill"></div></div><span class="rb-pct-txt">88%</span></div>
+            <div class="rb-item" data-pct="85"><span class="rb-label">Mech. Eng.</span><div class="rb-bar-wrap"><div class="rb-fill"></div></div><span class="rb-pct-txt">85%</span></div>
+            <div class="rb-item" data-pct="82"><span class="rb-label">Data Science</span><div class="rb-bar-wrap"><div class="rb-fill"></div></div><span class="rb-pct-txt">82%</span></div>
+            <div class="rb-item" data-pct="80"><span class="rb-label">Programming</span><div class="rb-bar-wrap"><div class="rb-fill"></div></div><span class="rb-pct-txt">80%</span></div>
+            <div class="rb-item" data-pct="78"><span class="rb-label">Signal Processing</span><div class="rb-bar-wrap"><div class="rb-fill"></div></div><span class="rb-pct-txt">78%</span></div>
+          </div>
+        </div>
+      </div>
+
       <div class="skills-grid">
         <div class="scat g-reveal" data-delay="0"><div class="scat-head"><span class="scat-icon">🧠</span><h4>AI / ML</h4></div><div class="chips"><span class="chip">PyTorch</span><span class="chip">TensorFlow</span><span class="chip">Scikit-learn</span><span class="chip">Vision Transformers</span><span class="chip">Mamba SSM</span><span class="chip">PINNs</span><span class="chip">LSTM</span></div></div>
         <div class="scat g-reveal" data-delay="100"><div class="scat-head"><span class="scat-icon">👁</span><h4>Computer Vision</h4></div><div class="chips"><span class="chip">OpenCV</span><span class="chip">MediaPipe</span><span class="chip">YOLO</span><span class="chip">Face Mesh</span><span class="chip">Pose Estimation</span><span class="chip">Object Tracking</span></div></div>
@@ -711,6 +734,17 @@
       <p class="foot-stack">Three.js · GSAP · Custom GLSL Shaders · Vanilla JS</p>
     </div>
   </footer>
+
+  <!-- Case Study Overlay -->
+  <div id="caseOverlay" class="case-overlay">
+    <div class="case-backdrop"></div>
+    <div class="case-modal">
+      <button class="case-close" id="caseClose" aria-label="Close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+      <div class="case-inner" id="caseInner"></div>
+    </div>
+  </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
