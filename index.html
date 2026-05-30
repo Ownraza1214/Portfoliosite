@@ -86,14 +86,14 @@
     <div class="hero-content">
       <div class="hero-eyebrow" id="heroEyebrow">
         <span class="e-dot"></span>
-        Mechanical Engineer &times; AI Researcher &times; PIEAS University
+        Industrial AI · Fault Detection · Computer Vision · PIEAS University
       </div>
       <h1 class="hero-title" id="heroTitle">
         <div class="line line1"><span data-text="Muhammad">Muhammad</span></div>
         <div class="line line2"><span>Own Raza</span></div>
       </h1>
       <p class="hero-typed" id="heroTyped">
-        Building intelligent systems at the intersection of<br>
+        Making rotating machinery intelligent through<br>
         <span class="typed-wrap"><span id="typed"></span><span class="cursor-blink">|</span></span>
       </p>
       <div class="hero-cta" id="heroCta">
@@ -734,6 +734,49 @@
       <p class="foot-stack">Three.js · GSAP · Custom GLSL Shaders · Vanilla JS</p>
     </div>
   </footer>
+
+  <!-- ─── Currently Building Widget ─── -->
+  <div id="buildWidget" class="build-widget">
+    <div class="bw-top">
+      <span class="bw-pulse"></span>
+      <span class="bw-title">CURRENTLY BUILDING</span>
+      <button class="bw-collapse" id="bwCollapse" aria-label="Toggle widget">−</button>
+    </div>
+    <div class="bw-content" id="bwContent">
+      <div class="bw-project-name" id="bwProjectName">MSViTFD v2</div>
+      <div class="bw-project-desc">Dual-Freq Mamba · extended bearing dataset</div>
+      <div class="bw-meta-row">
+        <span class="bw-status-badge">🔬 Training</span>
+        <span class="bw-commit" id="bwLastCommit">···</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── Terminal Modal ─── -->
+  <div id="terminalModal" class="terminal-modal">
+    <div class="tmo-header">
+      <div class="term-dots">
+        <span class="td td-r" id="termClose" style="cursor:pointer" title="Close"></span>
+        <span class="td td-y"></span>
+        <span class="td td-g"></span>
+      </div>
+      <span class="tmo-title">MOR@PIEAS — Terminal v1.0.0</span>
+      <span class="tmo-hint">` to toggle · ESC to close</span>
+    </div>
+    <div class="tmo-output" id="termOutput"></div>
+    <div class="tmo-input-row">
+      <span class="tmo-prompt">MOR@PIEAS:~$&nbsp;</span>
+      <input type="text" id="termInput" class="tmo-input" autocomplete="off" spellcheck="false" autocorrect="off" autocapitalize="off" placeholder="type 'help'">
+    </div>
+  </div>
+
+  <!-- ─── Terminal FAB ─── -->
+  <button class="term-fab" id="termFab" title="Open terminal  (press `)" aria-label="Open terminal">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+      <polyline points="4 17 10 11 4 5"/>
+      <line x1="12" y1="19" x2="20" y2="19"/>
+    </svg>
+  </button>
 
   <!-- Case Study Overlay -->
   <div id="caseOverlay" class="case-overlay">

@@ -49,6 +49,8 @@ function boot(){
   initThemeToggle();
   initRadarChart();
   initCaseStudy();
+  initCurrentlyBuilding();
+  initTerminal();
 }
 
 /* ── Per-section accent colour ──────────────────── */
@@ -140,7 +142,7 @@ function initJourneyPath(){
 /* ── Typewriter ─────────────────────────────────── */
 function initTyped(){
   const el=document.getElementById('typed'); if(!el) return;
-  const phrases=['Predictive Maintenance','Computer Vision','Fault Detection AI','Physics-Informed ML','Mechanical Engineering','AI Engineering'];
+  const phrases=['Turbofan RUL Estimation','Real-time Fault Detection','Computer Vision Systems','Physics-Informed Neural Nets','Vibration Signal Analysis','Industrial AI Engineering'];
   let pi=0,ci=0,del=false;
   function tick(){
     const p=phrases[pi];
@@ -791,6 +793,7 @@ function initCaseStudy(){
           </div>
         </div>
       </div>
+      ${renderArch(idx)}
     `;
     overlay.classList.add('open');
     document.body.style.overflow='hidden';
@@ -813,4 +816,328 @@ function initCaseStudy(){
   document.addEventListener('keydown',e=>{
     if(e.key==='Escape'&&overlay.classList.contains('open')) closeCase();
   });
+}
+
+/* ═══════════════════════════════════════════════════
+   FEATURE #5 — System Architecture Diagrams
+═══════════════════════════════════════════════════ */
+const archDiagrams=[
+  /* 0 — MechAI */
+  [{l:'Input',c:'blue',n:['N-CMAPSS Dataset','21 Sensor Streams']},
+   {l:'Preprocessing',c:'teal',n:['Normalisation','Sliding Window','FFT Extract']},
+   {l:'Model',c:'orange',n:['LSTM Encoder','Transformer']},
+   {l:'Fusion',c:'purple',n:['Feature Concat','Dense Head']},
+   {l:'Output',c:'green',n:['RUL Prediction','Anomaly Alert']}],
+
+  /* 1 — Advanced CV Suite */
+  [{l:'Input',c:'blue',n:['Camera / Video','Frame Buffer']},
+   {l:'Capture',c:'teal',n:['OpenCV Capture','Resize & Flip']},
+   {l:'MediaPipe',c:'purple',n:['FaceMesh 468pt','HandTracking 21pt','BlazePose 33pt']},
+   {l:'Processing',c:'orange',n:['Landmark Extract','Gesture Logic']},
+   {l:'Output',c:'green',n:['AR Overlay','Air Writing Canvas']}],
+
+  /* 2 — MSViTFD */
+  [{l:'Input',c:'blue',n:['Vibration Signal','CWRU Dataset']},
+   {l:'Decompose',c:'teal',n:['FFT Transform','High-Freq Branch','Low-Freq Branch']},
+   {l:'Backbone',c:'purple',n:['Multi-Scale ViT','Dual-Freq Mamba']},
+   {l:'Fusion',c:'orange',n:['Cross-Attention','Feature Merge']},
+   {l:'Output',c:'green',n:['Fault Class ×10','97.3% Accuracy']}],
+
+  /* 3 — WOA-PINNs */
+  [{l:'Input',c:'blue',n:['Pump Sensor Data','Flow / Pressure']},
+   {l:'Physics',c:'teal',n:['Navier-Stokes Eqs','Pump Curves']},
+   {l:'PINN Loss',c:'orange',n:['Physics Residual','Data-Driven Loss','Composite Loss']},
+   {l:'WOA Tuner',c:'purple',n:['Arch Search','Hyperparameter Opt.']},
+   {l:'Output',c:'green',n:['Cavitation Detection','91.4% Accuracy']}],
+
+  /* 4 — GearOptix */
+  [{l:'Input',c:'blue',n:['Gear Parameters','Load / Torque']},
+   {l:'Stress Analysis',c:'teal',n:['Lewis Bending','Hertz Contact','Efficiency Model']},
+   {l:'Optimisation',c:'orange',n:['Ratio Cascade','Stage Balancing']},
+   {l:'Simulation',c:'purple',n:['Dynamic Analysis','Natural Frequency']},
+   {l:'Output',c:'green',n:['AGMA Report','Design Specs']}],
+
+  /* 5 — mechforge */
+  [{l:'User Input',c:'blue',n:['Parameters','Unit System']},
+   {l:'Router',c:'teal',n:['Module Selector']},
+   {l:'Engine',c:'orange',n:['StressStrain','Thermodynamics','FluidMechanics','Dynamics']},
+   {l:'Post-process',c:'purple',n:['Unit Converter','Validation']},
+   {l:'Output',c:'green',n:['Results + Plots','Error Handling']}],
+];
+
+function renderArch(idx){
+  const layers=archDiagrams[idx]; if(!layers) return '';
+  let h=`<div class="cs-arch-section"><span class="cs-lbl">System Architecture</span><div class="arch-flow">`;
+  layers.forEach((layer,li)=>{
+    if(li>0) h+=`<div class="arch-arr">→</div>`;
+    h+=`<div class="arch-layer"><span class="arch-layer-lbl">${layer.l}</span><div class="arch-nodes-col">`;
+    layer.n.forEach(node=>{ h+=`<div class="arch-nd arch-${layer.c}">${node}</div>`; });
+    h+=`</div></div>`;
+  });
+  h+=`</div></div>`;
+  return h;
+}
+
+/* ═══════════════════════════════════════════════════
+   FEATURE #4 — Currently Building Widget
+═══════════════════════════════════════════════════ */
+const BUILD_CFG={
+  repo:'Ownraza1214/FaultDetection-MSViTFD-DualFreqMamba',
+};
+
+function initCurrentlyBuilding(){
+  const widget=document.getElementById('buildWidget');
+  const collapseBtn=document.getElementById('bwCollapse');
+  const content=document.getElementById('bwContent');
+  const commitEl=document.getElementById('bwLastCommit');
+  if(!widget) return;
+
+  /* Collapse / expand */
+  collapseBtn.addEventListener('click',()=>{
+    const collapsed=content.classList.toggle('collapsed');
+    collapseBtn.textContent=collapsed?'+':'−';
+  });
+
+  /* Fetch last commit time from GitHub public API */
+  fetch(`https://api.github.com/repos/${BUILD_CFG.repo}/commits?per_page=1`)
+    .then(r=>r.ok?r.json():null)
+    .then(data=>{
+      if(!data||!data[0]) return;
+      const date=new Date(data[0].commit.author.date);
+      const diff=Math.floor((Date.now()-date)/86400000);
+      commitEl.textContent=diff===0?'committed today':diff===1?'committed yesterday':`committed ${diff}d ago`;
+    })
+    .catch(()=>{ commitEl.textContent='active development'; });
+
+  /* Fade in after 2s so it doesn't distract on load */
+  widget.style.opacity='0';
+  widget.style.transform='translateY(12px)';
+  setTimeout(()=>{
+    gsap.to(widget,{opacity:1,y:0,duration:0.6,ease:'power2.out'});
+  },2200);
+}
+
+/* ═══════════════════════════════════════════════════
+   FEATURE #2 — Interactive Terminal
+═══════════════════════════════════════════════════ */
+function initTerminal(){
+  const modal  =document.getElementById('terminalModal');
+  const output =document.getElementById('termOutput');
+  const input  =document.getElementById('termInput');
+  const fab    =document.getElementById('termFab');
+  const closeBtn=document.getElementById('termClose');
+  if(!modal||!output||!input) return;
+
+  let isOpen=false;
+  const history=[];
+  let histIdx=-1;
+
+  /* ── Commands ── */
+  const CMDS={
+    help:()=>`<span class="tc-comment"># Available commands</span>
+<span class="tc-cmd">whoami</span>          about me in 10 seconds
+<span class="tc-cmd">skills</span>          tech stack with proficiency
+<span class="tc-cmd">projects</span>        all 6 projects
+<span class="tc-cmd">publications</span>    research papers
+<span class="tc-cmd">contact</span>         links & availability
+<span class="tc-cmd">ls</span>              list portfolio sections
+<span class="tc-cmd">uname -a</span>        system info
+<span class="tc-cmd">clear</span>           clear terminal
+<span class="tc-cmd">exit</span>            close terminal
+<span class="tc-dim">─────────────────────────────────</span>
+<span class="tc-dim">Hint: try  sudo hire-me</span>`,
+
+    whoami:()=>`<span class="tc-accent">Muhammad Own Raza</span>
+<span class="tc-dim">─────────────────────────────────────</span>
+Role      <span class="tc-accent">Industrial AI Engineer & Researcher</span>
+Uni       PIEAS University, Pakistan
+Focus     <span class="tc-green">Fault Detection · Computer Vision · Predictive ML</span>
+Status    <span class="tc-green">● Open to full-time & freelance roles</span>
+Upwork    Active · International clients
+Scholar   2 citations · h-index 1 · 4 papers
+<span class="tc-dim">─────────────────────────────────────</span>
+<span class="tc-dim">"Making rotating machinery intelligent."</span>`,
+
+    skills:()=>{
+      const sk=[
+        ['Computer Vision', 92,'OpenCV · MediaPipe · YOLO'],
+        ['AI / ML',         88,'PyTorch · TensorFlow · Transformers'],
+        ['Mech. Eng.',      85,'FEA · Vibration · SolidWorks'],
+        ['Data Science',    82,'NumPy · Pandas · Signal Proc.'],
+        ['Programming',     80,'Python · TypeScript · MATLAB'],
+        ['Signal Proc.',    78,'FFT · Wavelet · Time-Series'],
+      ];
+      return sk.map(([n,p,t])=>{
+        const filled=Math.round(p/10);
+        const bar='<span class="tc-green">'+'█'.repeat(filled)+'</span>'+'<span class="tc-dim">'+'░'.repeat(10-filled)+'</span>';
+        return `<span class="tc-accent">${n.padEnd(18)}</span>[${bar}] ${p}%  <span class="tc-dim">${t}</span>`;
+      }).join('\n');
+    },
+
+    projects:()=>`<span class="tc-dim"># 6 Projects — scroll to #projects for case studies</span>
+
+[01] <span class="tc-accent">MechAI</span>              Turbofan RUL · <span class="tc-green">94.2% accuracy</span>
+[02] <span class="tc-accent">Advanced CV Suite</span>   522+ landmarks · <span class="tc-green">60fps real-time</span>
+[03] <span class="tc-accent">MSViTFD</span>             Dual-Freq Mamba · <span class="tc-green">97.3% fault accuracy</span>
+[04] <span class="tc-accent">WOA-PINNs</span>           Cavitation detection · <span class="tc-green">Published 2026</span>
+[05] <span class="tc-accent">GearOptix</span>           Transmission design suite · AGMA validated
+[06] <span class="tc-accent">mechforge</span>           Python mech. eng. library on PyPI`,
+
+    publications:()=>`<span class="tc-dim"># Research — scholar.google.com/citations?user=aZGZaqQAAAAJ</span>
+
+[2025] <span class="tc-accent">Physics-Informed DL for PEM Fuel Cell Optimisation</span>
+       <span class="tc-green">1 citation</span> · Deep Learning · EV Systems · PINNs
+
+[2025] <span class="tc-accent">Hybrid Transformer-SE-ANN for Flood Risk Assessment</span>
+       <span class="tc-green">1 citation</span> · Transformer · Hybrid Models
+
+[2026] <span class="tc-accent">WOA-PINNs for Cavitation Fault Detection</span>
+       <span class="tc-dim">Pre-print</span> · PINNs · Metaheuristic Optimisation
+
+[2026] <span class="tc-accent">Balancing Progress and Ethics in AI (Survey)</span>
+       <span class="tc-dim">TechRxiv</span> · AI Ethics · Responsible Innovation
+
+Total: <span class="tc-green">4 papers · 2 citations · h-index 1</span>`,
+
+    contact:()=>`<span class="tc-accent">Contact Muhammad Own Raza</span>
+<span class="tc-dim">────────────────────────────────────────</span>
+Email     <span class="tc-green">bsme2249@pieas.edu.pk</span>
+GitHub    <span class="tc-green">github.com/Ownraza1214</span>
+LinkedIn  <span class="tc-green">linkedin.com/in/muhammad-own-raza-457261252</span>
+Scholar   <span class="tc-green">scholar.google.com/citations?user=aZGZaqQAAAAJ</span>
+Upwork    <span class="tc-green">● Available for contracts now</span>
+<span class="tc-dim">────────────────────────────────────────</span>
+Status    <span class="tc-green">● Open to roles & freelance</span>`,
+
+    ls:()=>`<span class="tc-accent">about</span>/      <span class="tc-accent">experience</span>/  <span class="tc-accent">projects</span>/   <span class="tc-accent">lab</span>/
+<span class="tc-accent">research</span>/   <span class="tc-accent">skills</span>/      <span class="tc-accent">resilience</span>/ <span class="tc-accent">contact</span>/`,
+
+    'uname -a':()=>`PIEAS-AI 2.0 MOR-Portfolio #4 SMP Three.js GSAP Python3 PyTorch x86_64 Industrial-Linux`,
+    uname:()=>`PIEAS-AI`,
+    clear:()=>'__CLEAR__',
+    exit:()=>'__CLOSE__',
+    q:()=>'__CLOSE__',
+  };
+
+  /* Easter eggs */
+  const EGGS={
+    'sudo hire-me':`<span class="tc-dim">[sudo] password for recruiter:</span>
+<span class="tc-green">✓  Authentication successful</span>
+<span class="tc-accent">Installing muhammad-own-raza@latest...</span>
+<span class="tc-green">████████████████████</span> 100%
+<span class="tc-green">✓  Successfully hired! Welcome to the team.</span>
+<span class="tc-dim">→  Contact: bsme2249@pieas.edu.pk</span>`,
+
+    'git log --oneline':`<span class="tc-dim">a1b2c3e</span> <span class="tc-accent">feat: MSViTFD v2 dual-frequency Mamba branch</span>
+<span class="tc-dim">9f8e7d6</span> feat: WOA-PINN cavitation detection published
+<span class="tc-dim">5c4b3a2</span> fix: reduce false positives by 62%
+<span class="tc-dim">1a2b3c4</span> feat: 60fps real-time CV landmark tracking
+<span class="tc-dim">8d9e0f1</span> init: PIEAS mechanical engineering journey begins`,
+
+    'rm -rf /':`<span class="tc-dim">rm: cannot remove '/':</span> <span class="tc-accent">Permission denied</span>
+<span class="tc-dim">(nice try)</span>`,
+
+    'npm install talent':`<span class="tc-accent">npm</span> notice created lockfile package-lock.json
+<span class="tc-green">added 1 package</span> in 2.6s
+
+<span class="tc-green">+ talent@∞.0.0</span>  →  <span class="tc-accent">muhammad-own-raza</span>`,
+
+    'python --version':`Python 3.11.4 (PIEAS-AI Edition, Jun 2026)`,
+    'python3 --version':`Python 3.11.4 (PIEAS-AI Edition, Jun 2026)`,
+    'pwd':`/home/mor/industrial-ai-research`,
+    'date':`${new Date().toUTCString()}`,
+  };
+
+  /* ── Welcome message ── */
+  function showWelcome(){
+    output.innerHTML=`<div class="tmo-welcome">┌──────────────────────────────────────────┐
+│  MOR Terminal v1.0.0 · PIEAS AI Lab      │
+│  Making rotating machinery intelligent.  │
+│  Type <span class="tc-cmd">help</span> for available commands.         │
+└──────────────────────────────────────────┘</div>`;
+  }
+
+  /* ── Process command ── */
+  function runCmd(raw){
+    const cmd=raw.trim().toLowerCase();
+    if(!cmd) return;
+
+    /* Echo the command */
+    const block=document.createElement('div');
+    block.className='tmo-block';
+    const echo=document.createElement('div');
+    echo.className='tmo-cmd-echo';
+    echo.textContent=raw;
+    block.appendChild(echo);
+
+    let result='';
+    if(EGGS[cmd]!==undefined) result=EGGS[cmd];
+    else if(CMDS[cmd]) result=CMDS[cmd]();
+    else result=`<span class="tc-dim">command not found: ${cmd}. Type <span class="tc-cmd">help</span> to see available commands.</span>`;
+
+    if(result==='__CLEAR__'){ output.innerHTML=''; showWelcome(); return; }
+    if(result==='__CLOSE__'){ closeTerminal(); return; }
+
+    const res=document.createElement('div');
+    res.className='tmo-result';
+    res.innerHTML=result;
+    block.appendChild(res);
+    output.appendChild(block);
+    output.scrollTop=output.scrollHeight;
+  }
+
+  /* ── Open / close ── */
+  function openTerminal(){
+    if(isOpen) return;
+    isOpen=true;
+    modal.classList.add('open');
+    if(fab) fab.classList.add('active');
+    if(!output.innerHTML.trim()) showWelcome();
+    setTimeout(()=>input.focus(),380);
+    /* Hide build widget while terminal is open */
+    const bw=document.getElementById('buildWidget');
+    if(bw) gsap.to(bw,{opacity:0,y:6,duration:0.2});
+  }
+  function closeTerminal(){
+    if(!isOpen) return;
+    isOpen=false;
+    modal.classList.remove('open');
+    if(fab) fab.classList.remove('active');
+    const bw=document.getElementById('buildWidget');
+    if(bw) gsap.to(bw,{opacity:1,y:0,duration:0.3});
+  }
+  function toggleTerminal(){ isOpen?closeTerminal():openTerminal(); }
+
+  /* ── Input handling ── */
+  input.addEventListener('keydown',e=>{
+    if(e.key==='Enter'){
+      const val=input.value;
+      if(val.trim()) history.unshift(val);
+      histIdx=-1;
+      runCmd(val);
+      input.value='';
+    }
+    if(e.key==='ArrowUp'){
+      e.preventDefault();
+      if(histIdx<history.length-1){ histIdx++; input.value=history[histIdx]; }
+    }
+    if(e.key==='ArrowDown'){
+      e.preventDefault();
+      if(histIdx>0){ histIdx--; input.value=history[histIdx]; }
+      else{ histIdx=-1; input.value=''; }
+    }
+    if(e.key==='Escape') closeTerminal();
+  });
+
+  /* ── Triggers ── */
+  document.addEventListener('keydown',e=>{
+    /* Backtick ` — don't fire when typing in any input/textarea */
+    if(e.key==='`'&&document.activeElement.tagName!=='INPUT'&&document.activeElement.tagName!=='TEXTAREA'){
+      e.preventDefault(); toggleTerminal();
+    }
+    if(e.key==='Escape'&&isOpen) closeTerminal();
+  });
+  if(fab) fab.addEventListener('click',toggleTerminal);
+  if(closeBtn) closeBtn.addEventListener('click',closeTerminal);
+  modal.addEventListener('click',e=>{ if(e.target===modal) closeTerminal(); });
 }
