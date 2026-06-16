@@ -439,11 +439,60 @@
     place-items: inherit;
     align-items: start;
     justify-content: left;
+    height: auto !important;
+    padding: 50px 0 30px;
   }
 
   .what-box {
     max-width: calc(100% - 25px);
     margin: 0;
+  }
+
+  .what-box h2 {
+    font-size: 42px;
+    line-height: 40px;
+    margin: 20px 0 30px;
+  }
+
+  .what-box:last-child {
+    height: auto !important;
+  }
+
+  .what-box-in {
+    height: auto !important;
+    gap: 16px;
+  }
+
+  /* Always expanded cards on mobile */
+  .what-content {
+    width: 100% !important;
+    min-height: auto !important;
+    height: auto !important;
+    padding: 20px !important;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+  }
+
+  .what-content-in {
+    opacity: 1 !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  .what-content h5,
+  .what-content-flex {
+    opacity: 1 !important;
+  }
+
+  /* Hide decorative borders on mobile */
+  .what-border1,
+  .what-border2,
+  .what-content::before,
+  .what-content::after,
+  .what-corner::before,
+  .what-corner::after {
+    display: none;
   }
 }
 
