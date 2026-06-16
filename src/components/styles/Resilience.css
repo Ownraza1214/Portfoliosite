@@ -1,0 +1,171 @@
+.resilience-section {
+  padding: 100px 0;
+  position: relative;
+}
+
+.resilience-container {
+  width: var(--cWidth);
+  max-width: var(--cMaxWidth);
+  margin: auto;
+}
+
+.resilience-header {
+  margin-bottom: 40px;
+}
+
+.resilience-header h2 {
+  font-size: clamp(40px, 5vw, 72px);
+  font-weight: 600;
+  margin: 0 0 16px 0;
+  font-family: "Geist", sans-serif;
+  letter-spacing: -1px;
+}
+
+.resilience-header h2 span {
+  color: var(--accentColor);
+  font-style: italic;
+}
+
+.resilience-subtitle {
+  font-size: 16px;
+  opacity: 0.5;
+  font-weight: 300;
+  letter-spacing: 0.5px;
+  max-width: 520px;
+  margin: 0;
+}
+
+.resilience-quote {
+  border-left: 3px solid var(--accentColor);
+  padding: 12px 24px;
+  margin: 48px 0 24px 0;
+  font-size: clamp(18px, 2vw, 26px);
+  font-style: italic;
+  opacity: 0.6;
+  font-weight: 300;
+}
+
+.resilience-intro {
+  font-size: 16px;
+  opacity: 0.5;
+  font-weight: 300;
+  margin: 0 0 60px 0;
+}
+
+/* Story Cards */
+.resilience-stories {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.resilience-card {
+  display: flex;
+  gap: 32px;
+  padding: 40px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  align-items: flex-start;
+  transition: 0.3s;
+}
+
+.resilience-card:first-child {
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.resilience-card:hover {
+  padding-left: 16px;
+}
+
+.resilience-icon {
+  font-size: 24px;
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.resilience-content {
+  flex: 1;
+}
+
+.resilience-meta {
+  margin-bottom: 10px;
+}
+
+.resilience-type {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  opacity: 0.4;
+}
+
+.resilience-content h3 {
+  font-size: clamp(18px, 1.8vw, 22px);
+  font-weight: 600;
+  margin: 0 0 16px 0;
+  font-family: "Geist", sans-serif;
+}
+
+.resilience-content p {
+  font-size: 15px;
+  line-height: 1.7;
+  opacity: 0.5;
+  font-weight: 300;
+  margin: 0 0 24px 0;
+  max-width: 720px;
+}
+
+.resilience-lesson {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.lesson-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  opacity: 0.35;
+  flex-shrink: 0;
+}
+
+.lesson-text {
+  font-size: 15px;
+  color: var(--accentColor);
+  font-style: italic;
+  font-weight: 400;
+}
+
+.resilience-closing {
+  margin-top: 64px;
+  font-size: 16px;
+  line-height: 1.7;
+  opacity: 0.4;
+  font-weight: 300;
+  max-width: 680px;
+  font-style: italic;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  padding-top: 40px;
+}
+
+@media (max-width: 768px) {
+  .resilience-section {
+    padding: 60px 0;
+  }
+
+  .resilience-card {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .resilience-icon {
+    width: 44px;
+    height: 44px;
+    font-size: 20px;
+  }
+}

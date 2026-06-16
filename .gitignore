@@ -1,4 +1,26 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+build/
+
+# Environment variables
+.env
+.env.local
+.env.production
+
+# IDE / OS
 .claude/
-*.png.bak
-Thumbs.db
 .DS_Store
+Thumbs.db
+*.png.bak
+
+# Large media files
+*.mp4
+*.mov
+*.avi
+
+# Logs
+*.log
+npm-debug.log*

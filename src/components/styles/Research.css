@@ -1,0 +1,260 @@
+.research-section {
+  padding: 100px 0;
+  position: relative;
+}
+
+.research-container {
+  width: var(--cWidth);
+  max-width: var(--cMaxWidth);
+  margin: auto;
+}
+
+.research-header {
+  margin-bottom: 60px;
+}
+
+.research-header h2 {
+  font-size: clamp(40px, 5vw, 72px);
+  font-weight: 600;
+  margin: 0 0 16px 0;
+  font-family: "Geist", sans-serif;
+  letter-spacing: -1px;
+}
+
+.research-header h2 span {
+  color: var(--accentColor);
+  font-style: italic;
+}
+
+.research-header p {
+  font-size: 16px;
+  opacity: 0.5;
+  font-weight: 300;
+  letter-spacing: 0.5px;
+  max-width: 500px;
+}
+
+/* Scholar Card */
+.research-scholar-card {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 28px 36px;
+  margin-bottom: 48px;
+  flex-wrap: wrap;
+}
+
+.scholar-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex: 1;
+}
+
+.scholar-avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: var(--accentColor);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: #000;
+  flex-shrink: 0;
+  letter-spacing: 1px;
+}
+
+.scholar-details h4 {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 4px 0;
+}
+
+.scholar-details p {
+  font-size: 13px;
+  opacity: 0.5;
+  margin: 0;
+}
+
+.scholar-stats {
+  display: flex;
+  gap: 36px;
+}
+
+.scholar-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.stat-num {
+  font-size: 28px;
+  font-weight: 700;
+  font-family: "Geist", sans-serif;
+  color: var(--accentColor);
+}
+
+.stat-label {
+  font-size: 11px;
+  opacity: 0.5;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.scholar-link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--accentColor);
+  text-decoration: none;
+  border: 1px solid var(--accentColor);
+  padding: 10px 20px;
+  border-radius: 8px;
+  transition: 0.3s;
+  white-space: nowrap;
+}
+
+.scholar-link:hover {
+  background: var(--accentColor);
+  color: #000;
+}
+
+/* Paper Cards */
+.research-papers {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.research-paper-card {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  padding: 32px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  position: relative;
+  transition: 0.3s;
+  cursor: pointer;
+}
+
+.research-paper-card:first-child {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.research-paper-card:hover {
+  padding-left: 20px;
+}
+
+.research-paper-card:hover .paper-title {
+  color: var(--accentColor);
+}
+
+.paper-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.paper-year {
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 2px;
+  opacity: 0.4;
+  text-transform: uppercase;
+}
+
+.paper-citations {
+  font-size: 11px;
+  padding: 2px 10px;
+  background: rgba(245, 158, 11, 0.15);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  border-radius: 20px;
+  color: var(--accentColor);
+}
+
+.paper-preprint {
+  font-size: 11px;
+  padding: 2px 10px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 20px;
+  opacity: 0.6;
+}
+
+.paper-title {
+  font-size: clamp(16px, 1.8vw, 22px);
+  font-weight: 500;
+  margin: 0 0 10px 0;
+  line-height: 1.4;
+  transition: 0.3s;
+  padding-right: 48px;
+}
+
+.paper-authors {
+  font-size: 13px;
+  opacity: 0.4;
+  margin: 0 0 16px 0;
+  font-weight: 300;
+}
+
+.paper-topics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.paper-tag {
+  font-size: 11px;
+  padding: 3px 10px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 20px;
+  opacity: 0.7;
+}
+
+.paper-arrow {
+  position: absolute;
+  top: 32px;
+  right: 0;
+  font-size: 20px;
+  opacity: 0.3;
+  transition: 0.3s;
+}
+
+.research-paper-card:hover .paper-arrow {
+  opacity: 1;
+  color: var(--accentColor);
+}
+
+@media (max-width: 768px) {
+  .research-section {
+    padding: 60px 0;
+  }
+
+  .research-scholar-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 24px;
+    padding: 24px;
+  }
+
+  .scholar-stats {
+    gap: 24px;
+  }
+
+  .paper-title {
+    padding-right: 0;
+  }
+
+  .paper-arrow {
+    display: none;
+  }
+}
