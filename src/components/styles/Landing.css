@@ -61,6 +61,11 @@
     width: 100% !important;
   }
 
+  .character-model::before,
+  .character-model::after {
+    display: none !important;
+  }
+
   .landing-circle1 {
     display: block !important;
   }
