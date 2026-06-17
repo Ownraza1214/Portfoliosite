@@ -92,11 +92,12 @@ export function setCharTimeline(
       .to(character.rotation, { x: -0.04, duration: 2, delay: 1 }, 0);
 
   } else if (character) {
-    // Mobile: same scroll feel as desktop — character slides left, sections reveal
+    // Mobile: same scroll feel as desktop — character slides left, about section reveals
     tl1
       .fromTo(character.rotation, { y: 0 }, { y: 0.5, duration: 1 }, 0)
       .fromTo(".character-model", { x: 0 }, { x: "-110%", duration: 1 }, 0)
-      .to(".landing-container", { opacity: 0, duration: 0.5 }, 0);
+      .to(".landing-container", { opacity: 0, duration: 0.5 }, 0)
+      .fromTo(".about-me", { y: "-60%" }, { y: "0%", duration: 1 }, 0);
 
     // Slide character back up out of view when WhatIDo section comes
     tl3
