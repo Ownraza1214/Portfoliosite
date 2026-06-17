@@ -4,7 +4,6 @@
   .landing-container {
     height: var(--vh) !important;
     min-height: 100svh;
-    overflow: hidden;
   }
 
   .landing-intro {
@@ -55,10 +54,10 @@
 
   .character-model {
     display: block !important;
-    height: 100svh !important;
-    position: fixed !important;
+    height: 90svh !important;
+    position: absolute !important;
     bottom: 0 !important;
-    z-index: 10 !important;
+    z-index: 0 !important;
     width: 100% !important;
   }
 

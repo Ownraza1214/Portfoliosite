@@ -119,6 +119,20 @@ export function setCharTimeline(
         .to(character.rotation, { x: -0.04, duration: 2, delay: 1 }, 0);
     }
   } else {
+    // Mobile: fade + slide character out as user scrolls past landing
+    const tMobile = gsap.timeline({
+      scrollTrigger: {
+        trigger: ".landing-section",
+        start: "top top",
+        end: "bottom top",
+        scrub: true,
+        invalidateOnRefresh: true,
+      },
+    });
+    tMobile
+      .to(".character-model", { opacity: 0, y: "-30%", duration: 1 }, 0)
+      .to(".landing-container", { opacity: 0, duration: 0.4 }, 0);
+
     if (character) {
       const tM2 = gsap.timeline({
         scrollTrigger: {
