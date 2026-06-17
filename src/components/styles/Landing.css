@@ -54,15 +54,15 @@
 
   .character-model {
     display: block !important;
-    height: 90svh !important;
-    position: absolute !important;
+    height: 100svh !important;
+    position: fixed !important;
     bottom: 0 !important;
-    z-index: 0 !important;
+    z-index: 11 !important;
     width: 100% !important;
   }
 
   .landing-circle1 {
-    display: none !important;
+    display: block !important;
   }
 }
 

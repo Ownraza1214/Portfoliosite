@@ -11,8 +11,6 @@ gsap.registerPlugin(ScrollTrigger);
 
 const Work = () => {
   useEffect(() => {
-    if (window.innerWidth <= 768) return;
-
     let translateX: number = 0;
 
     function setTranslateX() {

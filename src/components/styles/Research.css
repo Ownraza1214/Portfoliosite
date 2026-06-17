@@ -255,6 +255,6 @@
   }
 
   .paper-arrow {
-    display: none;
+    display: flex;
   }
 }
