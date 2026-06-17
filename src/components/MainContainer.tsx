@@ -16,10 +16,8 @@ import Resilience from "./Resilience";
 import setSplitText from "./utils/splitText";
 
 const MainContainer = ({ children }: PropsWithChildren) => {
-  const [isDesktopView, setIsDesktopView] = useState<boolean>(
-    window.innerWidth > 1024
-  );
-  const [isMobile] = useState<boolean>(window.innerWidth <= 768);
+  const [isDesktopView, setIsDesktopView] = useState<boolean>(true);
+  const [isMobile] = useState<boolean>(false);
 
   useEffect(() => {
     const resizeHandler = () => {

@@ -1,258 +1,69 @@
-/* Mobile hero - hidden on desktop */
-.mobile-hero {
-  display: none;
-}
-
+/* Mobile — keep 3D character visible, adjust sizes */
 @media only screen and (max-width: 768px) {
-  /* Hide desktop landing elements */
-  .landing-intro,
-  .landing-info,
-  .landing-circle1,
-  .landing-circle2,
-  .character-model,
-  .character-rim,
-  .nav-fade {
-    display: none !important;
-  }
-
-  /* Landing section becomes full-screen container */
-  .landing-section {
-    height: auto !important;
-    min-height: 100svh;
-    width: 100% !important;
-    padding: 0 !important;
-    margin: 0 !important;
-  }
-
+  .landing-section,
   .landing-container {
-    height: auto !important;
-    width: 100% !important;
-    margin: 0 !important;
-    padding: 0 !important;
-  }
-
-  /* === MOBILE HERO === */
-  .mobile-hero {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    height: var(--vh) !important;
     min-height: 100svh;
-    width: 100%;
-    padding: 0;
-    position: relative;
     overflow: hidden;
-    background: var(--backgroundColor);
   }
 
-  /* Ambient glow background */
-  .mobile-hero::before {
-    content: '';
-    position: absolute;
-    top: -80px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 320px;
-    height: 320px;
-    background: radial-gradient(circle, rgba(245, 158, 11, 0.18) 0%, transparent 70%);
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  /* Photo section — top half */
-  .mobile-hero-photo {
-    position: relative;
-    width: 100%;
-    height: 52svh;
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-    overflow: hidden;
-    flex-shrink: 0;
-  }
-
-  .mobile-hero-glow {
-    position: absolute;
-    bottom: -20px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 260px;
-    height: 260px;
-    background: radial-gradient(circle, rgba(245, 158, 11, 0.22) 0%, transparent 70%);
-    border-radius: 50%;
-    z-index: 0;
-  }
-
-  .mobile-hero-photo img {
-    height: 100%;
-    width: auto;
-    max-width: 100%;
-    object-fit: cover;
-    object-position: top center;
-    position: relative;
-    z-index: 1;
-    -webkit-mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
-    mask-image: linear-gradient(to bottom, black 70%, transparent 100%);
-  }
-
-  /* Text section — bottom half */
-  .mobile-hero-text {
-    position: relative;
-    z-index: 2;
-    width: 100%;
-    padding: 0 24px 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  .landing-intro {
+    top: 12% !important;
+    left: 50% !important;
+    right: auto !important;
+    transform: translateX(-50%) !important;
     text-align: center;
-    flex: 1;
+    width: 90% !important;
+    z-index: 12;
   }
 
-  .mobile-hero-greeting {
-    font-size: 13px;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: var(--accentColor);
-    margin: 0 0 6px 0;
-    font-weight: 400;
+  .landing-intro h2 {
+    font-size: 14px !important;
+    letter-spacing: 2px;
   }
 
-  .mobile-hero-name {
-    font-size: 36px;
-    font-weight: 700;
-    line-height: 1.1;
-    margin: 0 0 16px 0;
-    letter-spacing: -0.5px;
-    color: #fff;
+  .landing-intro h1 {
+    font-size: 26px !important;
+    line-height: 28px !important;
   }
 
-  .mobile-hero-roles {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-    justify-content: center;
-    margin-bottom: 14px;
-  }
-
-  .mobile-role-pill {
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    padding: 5px 14px;
-    background: var(--accentColor);
-    color: #000;
-    border-radius: 30px;
-  }
-
-  .mobile-role-pill--outline {
-    background: transparent;
-    color: var(--accentColor);
-    border: 1px solid var(--accentColor);
-  }
-
-  .mobile-hero-bio {
-    font-size: 12px;
-    color: rgba(255,255,255,0.45);
-    margin: 0 0 18px 0;
-    letter-spacing: 0.3px;
-    line-height: 1.6;
-  }
-
-  /* Stats row */
-  .mobile-hero-stats {
-    display: flex;
-    align-items: center;
-    gap: 0;
-    width: 100%;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 14px;
-    padding: 14px 0;
-    margin-bottom: 20px;
-  }
-
-  .mobile-stat {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 3px;
-  }
-
-  .mobile-stat-num {
-    font-size: 26px;
-    font-weight: 700;
-    color: var(--accentColor);
-    line-height: 1;
-  }
-
-  .mobile-stat-label {
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: rgba(255,255,255,0.4);
-  }
-
-  .mobile-stat-divider {
-    width: 1px;
-    height: 36px;
-    background: rgba(255,255,255,0.1);
-  }
-
-  /* CTA buttons */
-  .mobile-hero-cta {
-    display: flex;
-    gap: 12px;
-    width: 100%;
-    margin-bottom: 24px;
-  }
-
-  .mobile-cta-btn {
-    flex: 1;
+  .landing-info {
+    bottom: 12% !important;
+    top: auto !important;
+    left: 50% !important;
+    right: auto !important;
+    transform: translateX(-50%) !important;
     text-align: center;
-    padding: 13px 0;
-    border-radius: 10px;
-    font-size: 13px;
-    font-weight: 600;
-    text-decoration: none;
-    background: var(--accentColor);
-    color: #000;
-    letter-spacing: 0.3px;
-    transition: 0.2s;
+    z-index: 12;
   }
 
-  .mobile-cta-btn--outline {
-    background: transparent;
-    color: var(--accentColor);
-    border: 1px solid var(--accentColor);
+  .landing-info h3 {
+    font-size: 14px !important;
+    text-align: center;
   }
 
-  /* Scroll hint */
-  .mobile-scroll-hint {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
-    padding-bottom: 20px;
-    opacity: 0.35;
+  .landing-info h2 {
+    font-size: 22px !important;
+    line-height: 26px !important;
+    margin-left: 0 !important;
+    text-align: center;
   }
 
-  .mobile-scroll-line {
-    width: 1px;
-    height: 40px;
-    background: linear-gradient(to bottom, transparent, var(--accentColor));
-    animation: scrollPulse 1.8s ease-in-out infinite;
+  h2.landing-info-h2 {
+    font-size: 28px !important;
   }
 
-  .mobile-scroll-hint span {
-    font-size: 9px;
-    letter-spacing: 3px;
-    text-transform: uppercase;
+  .character-model {
+    display: block !important;
+    height: 100svh !important;
+    position: fixed !important;
+    bottom: 0 !important;
+    z-index: 10 !important;
+    width: 100% !important;
   }
 
-  @keyframes scrollPulse {
-    0%, 100% { opacity: 0.3; transform: scaleY(0.8); }
-    50% { opacity: 1; transform: scaleY(1); }
+  .landing-circle1 {
+    display: none !important;
   }
 }
 

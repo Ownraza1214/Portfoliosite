@@ -10,30 +10,25 @@ export let lenis: Lenis | null = null;
 
 const Navbar = () => {
   useEffect(() => {
-    // Skip Lenis on mobile — use native scroll instead
-    if (window.innerWidth <= 768) {
-      document.body.style.overflowY = "auto";
-    } else {
-      // Initialize Lenis smooth scroll (desktop only)
-      lenis = new Lenis({
-        duration: 1.7,
-        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-        orientation: "vertical",
-        gestureOrientation: "vertical",
-        smoothWheel: true,
-        wheelMultiplier: 1.7,
-        touchMultiplier: 2,
-        infinite: false,
-      });
+    // Initialize Lenis smooth scroll on all devices
+    lenis = new Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      orientation: "vertical",
+      gestureOrientation: "vertical",
+      smoothWheel: true,
+      wheelMultiplier: 1,
+      touchMultiplier: 1.5,
+      infinite: false,
+    });
 
-      lenis.stop();
+    lenis.stop();
 
-      function raf(time: number) {
-        lenis?.raf(time);
-        requestAnimationFrame(raf);
-      }
+    function raf(time: number) {
+      lenis?.raf(time);
       requestAnimationFrame(raf);
     }
+    requestAnimationFrame(raf);
 
     // Handle navigation links
     let links = document.querySelectorAll(".header ul a");

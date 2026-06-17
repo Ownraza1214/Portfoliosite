@@ -2,7 +2,6 @@ import {
   createContext,
   PropsWithChildren,
   useContext,
-  useEffect,
   useState,
 } from "react";
 import Loading from "../components/Loading";
@@ -15,21 +14,11 @@ interface LoadingType {
 
 export const LoadingContext = createContext<LoadingType | null>(null);
 
-const isMobileDevice = () => window.innerWidth <= 768;
-
 export const LoadingProvider = ({ children }: PropsWithChildren) => {
-  const [isLoading, setIsLoading] = useState(() => !isMobileDevice());
+  const [isLoading, setIsLoading] = useState(true);
   const [loading, setLoading] = useState(0);
 
   const value = { isLoading, setIsLoading, setLoading };
-
-  useEffect(() => {
-    if (!isMobileDevice()) return;
-    // On mobile: no 3D model, run animations immediately
-    import("../components/utils/initialFX").then((module) => {
-      if (module.initialFX) module.initialFX();
-    });
-  }, []);
 
   return (
     <LoadingContext.Provider value={value as LoadingType}>
