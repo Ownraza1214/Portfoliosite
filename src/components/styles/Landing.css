@@ -1,13 +1,15 @@
-/* Mobile — keep 3D character visible, adjust sizes */
+/* Mobile layout */
 @media only screen and (max-width: 768px) {
   .landing-section,
   .landing-container {
-    height: var(--vh) !important;
+    height: 100svh !important;
     min-height: 100svh;
+    overflow: visible;
   }
 
+  /* Name top-center */
   .landing-intro {
-    top: 12% !important;
+    top: 8% !important;
     left: 50% !important;
     right: auto !important;
     transform: translateX(-50%) !important;
@@ -15,19 +17,12 @@
     width: 90% !important;
     z-index: 12;
   }
+  .landing-intro h2 { font-size: 13px !important; letter-spacing: 2px; }
+  .landing-intro h1 { font-size: 24px !important; line-height: 26px !important; }
 
-  .landing-intro h2 {
-    font-size: 14px !important;
-    letter-spacing: 2px;
-  }
-
-  .landing-intro h1 {
-    font-size: 26px !important;
-    line-height: 28px !important;
-  }
-
+  /* Role bottom-center */
   .landing-info {
-    bottom: 12% !important;
+    bottom: 10% !important;
     top: auto !important;
     left: 50% !important;
     right: auto !important;
@@ -35,38 +30,42 @@
     text-align: center;
     z-index: 12;
   }
+  .landing-info h3 { font-size: 13px !important; text-align: center; }
+  .landing-info h2 { font-size: 20px !important; line-height: 24px !important; margin-left: 0 !important; text-align: center; }
+  h2.landing-info-h2 { font-size: 26px !important; }
 
-  .landing-info h3 {
-    font-size: 14px !important;
-    text-align: center;
-  }
-
-  .landing-info h2 {
-    font-size: 22px !important;
-    line-height: 26px !important;
-    margin-left: 0 !important;
-    text-align: center;
-  }
-
-  h2.landing-info-h2 {
-    font-size: 28px !important;
-  }
-
+  /* Character — fixed full height, slides left on scroll */
   .character-model {
     display: block !important;
-    height: 100svh !important;
     position: fixed !important;
-    bottom: 0 !important;
-    z-index: 11 !important;
+    height: 100svh !important;
     width: 100% !important;
+    bottom: 0 !important;
+    z-index: 6 !important;
+    pointer-events: none !important;
   }
 
+  /* Hide pseudo-elements (only needed for desktop fixed mode) */
   .character-model::before,
   .character-model::after {
     display: none !important;
   }
 
-  .landing-circle1 {
+  /* Contain character-rim inside viewport */
+  .character-rim {
+    width: min(340px, 88vw) !important;
+    height: min(340px, 88vw) !important;
+  }
+
+  /* Keep role text from overflowing */
+  h2.landing-info-h2 {
+    white-space: normal !important;
+    max-width: 90vw;
+  }
+
+  /* Hide decorative circles on mobile */
+  .landing-circle1,
+  .landing-circle2 {
     display: none !important;
   }
 }

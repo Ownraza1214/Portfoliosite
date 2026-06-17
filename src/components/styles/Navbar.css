@@ -15,15 +15,22 @@
 }
 
 .header ul {
-  font-size: 11px;
+  font-size: 9px;
   display: flex;
   flex-direction: row;
   align-items: center;
   margin: 0;
   padding: 0;
   list-style: none;
-  gap: 18px;
+  gap: 8px;
   flex-wrap: nowrap;
+}
+
+@media only screen and (min-width: 400px) {
+  .header ul {
+    font-size: 10px;
+    gap: 10px;
+  }
 }
 
 .header ul li {

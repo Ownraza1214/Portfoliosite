@@ -66,6 +66,10 @@ main {
   }
 }
 
+html {
+  overflow-x: hidden;
+}
+
 body {
   margin: 0;
   height: auto;
@@ -191,5 +195,21 @@ body {
 
   img {
     content-visibility: auto;
+  }
+
+  /* Sections need opaque background so they cover character after it slides away */
+  .about-section,
+  .whatIDO,
+  .career-section,
+  .work-section,
+  .lab-section,
+  .research-section,
+  .techstack,
+  .resilience-section,
+  .cta-section,
+  .contact-section {
+    position: relative;
+    z-index: 5;
+    background-color: var(--backgroundColor);
   }
 }
