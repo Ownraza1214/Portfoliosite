@@ -92,16 +92,19 @@ export function setCharTimeline(
       .to(character.rotation, { x: -0.04, duration: 2, delay: 1 }, 0);
 
   } else if (character) {
+    // Clear the CSS translateX(-50%) before GSAP takes control, so x:0 = left edge at 0
+    const charEl = document.querySelector(".character-model") as HTMLElement;
+    if (charEl) charEl.style.transform = "none";
+
     // Mobile: same scroll feel as desktop — character slides left, about section reveals
     tl1
       .fromTo(character.rotation, { y: 0 }, { y: 0.5, duration: 1 }, 0)
       .fromTo(".character-model", { x: 0 }, { x: "-110%", duration: 1 }, 0)
-      .to(".landing-container", { opacity: 0, duration: 0.5 }, 0)
-      .fromTo(".about-me", { y: "-60%" }, { y: "0%", duration: 1 }, 0);
+      .to(".landing-container", { opacity: 0, duration: 0.5 }, 0);
 
-    // Slide character back up out of view when WhatIDo section comes
+    // Slide character up out of view when WhatIDo section comes (x already at -110% from tl1)
     tl3
-      .fromTo(".character-model", { x: "-110%", y: "0%" }, { y: "-100%", duration: 3, ease: "none" }, 0);
+      .fromTo(".character-model", { y: "0%" }, { y: "-100%", duration: 3, ease: "none" }, 0);
 
     gsap.set(".what-box-in", { display: "flex" });
   }
